@@ -71,7 +71,7 @@
 ### 3-1. 테이블 상세
 #### User (사용자)
 - **컬럼**
-    - `id (PK)`: 사용자 ID, Integer, Auto Increment
+    - `id (PK)`: 사용자 ID, Long, Auto Increment
     - `username`: 사용자 이름, Varchar(255)
     - `created_at`: 생성일시, Timestamp
     - `updated_at`: 수정일시, Timestamp
@@ -79,17 +79,18 @@
 #### Lecture (강의)
 - **테이블명** : `lecture`
 - **컬럼**
-  - `id (PK)`: 강의 ID, Integer, Auto Increment
+  - `id (PK)`: 강의 ID, Long, Auto Increment
   - `name`: 강의명, Varchar(255)
   - `lecturer`: 강연자명, Varchar(255)
   - `lecture_date`: 강의 일시, DateTime
   - `capacity`: 정원, Integer
+  - `remain_seats`: 여석, Integer
   - `created_at`: 생성일시, Timestamp
   - `updated_at`: 수정일시, Timestamp
 
 #### Lecture_Enrollment (강의신청)
 - **컬럼**
-  - `id (PK)`: 신청 내역 ID, Integer, Auto Increment
+  - `id (PK)`: 신청 내역 ID, Long, Auto Increment
   - `user_id (FK)`: 사용자 ID (User.id)
   - `lecture_id (FK)`: 강의 ID (Lecture.id)
   - `created_at`: 신청일시, Timestamp 
