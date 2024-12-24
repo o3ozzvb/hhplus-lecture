@@ -1,9 +1,22 @@
 package com.example.hhplus_lecture.interfaces.api.lecture;
 
+import com.example.hhplus_lecture.domain.lecture.LectureService;
+import com.example.hhplus_lecture.interfaces.dto.lecture.LectureEnrollRequest;
+import com.example.hhplus_lecture.interfaces.dto.lecture.LectureRequest;
+import com.example.hhplus_lecture.interfaces.dto.lecture.LectureResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+@RequiredArgsConstructor
 @RestController
 public class LectureController {
+
+    private final LectureService lectureService;
 
     /** todo
         (핵심)특강 신청 API
@@ -12,11 +25,20 @@ public class LectureController {
         - 특강은 선착순 30명만 신청 가능합니다.
         - 이미 신청자가 30명이 초과 되면 이후 신청자는 요청을 실패합니다.
      */
+    @PostMapping("/lectures")
+    public void enrollInLecture(@RequestBody LectureEnrollRequest request) {
+        lectureService.enrollIn(request.getUserId(), request.getLectureId());
+    }
+
 
     /** todo
      *  특강 신청 가능 목록 API**
      *  - 날짜별로 현재 신청 가능한 특강 목록을 조회하는 API 를 작성합니다.
      *  - 특강의 정원은 30명으로 고정이며, 사용자는 각 특강에 신청하기 전 목록을 조회해 볼 수 있어야 합니다.
      */
+    @GetMapping("/lectures")
+    public List<LectureResponse> getAvailableLectures(LectureRequest request) {
+        return null;
+    }
 
 }
