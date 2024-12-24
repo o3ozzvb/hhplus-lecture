@@ -23,7 +23,7 @@ public class LectureEnrollmentRepositoryImpl implements LectureEnrollmentReposit
     }
 
     @Override
-    public List<LectureEnrollment> findByUserId(Long userId) {
-        return lectureEnrollmentJpaRespository.findByUserId(userId);
+    public List<LectureEnrollment> findAllByUserId(Long userId) {
+        return lectureEnrollmentJpaRespository.findAllByUserId(userId);
     }
 }

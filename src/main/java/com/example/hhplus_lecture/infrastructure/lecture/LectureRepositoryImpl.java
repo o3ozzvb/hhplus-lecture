@@ -7,6 +7,7 @@ import com.example.hhplus_lecture.support.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class LectureRepositoryImpl implements LectureRepository {
     }
 
     @Override
-    public List<Lecture> findAll() {
-        return lectureJpaRespository.findAll();
+    public List<Lecture> findAvailableLectures(LocalDateTime startDate, LocalDateTime endDate, int remainSeats) {
+        return lectureJpaRespository.findByLectureDateBetweenAndRemainSeatsGreaterThan(startDate, endDate, remainSeats);
     }
 }

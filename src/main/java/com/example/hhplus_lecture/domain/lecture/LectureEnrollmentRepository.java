@@ -8,6 +8,6 @@ public interface LectureEnrollmentRepository {
 
     List<LectureEnrollment> findBy(long userId, long lectureId);
 
-    List<LectureEnrollment> findByUserId(Long userId);
+    List<LectureEnrollment> findAllByUserId(Long userId);
 
 }

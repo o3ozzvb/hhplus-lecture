@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 class LectureServiceTest {
 
     @Autowired
-    private LectureService lectureService;
+    private LectureServiceImpl lectureService;
 
     @Autowired
     private LectureRepository lectureRepository;
@@ -89,5 +89,48 @@ class LectureServiceTest {
         // then
         Lecture findLecture = lectureRepository.findById(lectureId);
         assertThat(findLecture.getRemainSeats()).isEqualTo(lecture.getRemainSeats() - 1);
+    }
+
+    @Test
+    public void 신청가능_특강목록_조회_성공() {
+        //given
+        Lecture 특강1 = lectureRepository.save(createLecture("특강1", "일강사", "202412251300", 30));
+
+        Lecture 특강2 = lectureRepository.save(createLecture("특강2", "이강사", "202412260000", 30));
+        Lecture 특강3 = lectureRepository.save(createLecture("특강3", "삼강사", "202412291300", 30));
+        Lecture 특강4 = lectureRepository.save(createLecture("특강4", "사강사", "202412312359", 30));
+        Lecture 특강5 = lectureRepository.save(createLecture("특강5", "오강사", "202412301400", 0));
+
+        Lecture 특강6 = lectureRepository.save(createLecture("특강6", "육강사", "202501010000", 30));
+
+        //when
+        List<Lecture> lectures = lectureService.findAvailableLectures("20241226", "20241231");
+
+        //then
+        assertThat(lectures).hasSize(3)
+                .extracting(Lecture::getId)
+                .containsExactly(특강2.getId(), 특강3.getId(), 특강4.getId());
+    }
+
+    @Test
+    public void 사용자가_신청한_강의목록_조회_성공() {
+        //given
+        Lecture 특강1 = lectureRepository.save(createLecture("특강1", "일강사", "202412251300", 30));
+        Lecture 특강2 = lectureRepository.save(createLecture("특강2", "이강사", "202412260000", 30));
+        Lecture 특강3 = lectureRepository.save(createLecture("특강3", "삼강사", "202412291300", 30));
+
+        lectureEnrollmentRepository.save(LectureEnrollment.of(userId, 특강1.getId()));
+        lectureEnrollmentRepository.save(LectureEnrollment.of(userId, 특강2.getId()));
+
+        //when
+        List<LectureEnrollment> lectureEnrollments = lectureService.findLectureEnrollmentsByUserId(userId);
+
+        //then
+        assertThat(lectureEnrollments).hasSize(2)
+                .extracting("userId", "lectureId")
+                .containsExactly(
+                        tuple(userId, 특강1.getId()),
+                        tuple(userId, 특강2.getId())
+                );
     }
 }
