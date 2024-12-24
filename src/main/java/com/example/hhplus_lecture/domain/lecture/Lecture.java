@@ -1,25 +1,56 @@
 package com.example.hhplus_lecture.domain.lecture;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lecture {
 
-    private final Long id;
-    private final String name;
-    private final String lecturer;
-    private final LocalDateTime lectureDate;
-    private final Integer capacity;
-    private final LocalDateTime createdAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Lecture(Long id, String name, String lecturer, LocalDateTime lectureDate,
-                   Integer capacity, LocalDateTime createdAt) {
-        this.id = id;
-        this.name = name;
-        this.lecturer = lecturer;
-        this.lectureDate = lectureDate;
-        this.capacity = capacity;
-        this.createdAt = createdAt;
+    private String name;
+
+    private String lecturer;
+
+    private LocalDateTime lectureDate;
+
+    private Integer capacity;
+
+    private Integer remainSeats;
+
+    private LocalDateTime createdAt;
+
+    // 생성자: id 필드를 포함하지 않음
+    public static Lecture of(String name, String lecturer, LocalDateTime lectureDate, Integer capacity, Integer remainSeats) {
+        Lecture lecture = new Lecture();
+
+        lecture.name = name;
+        lecture.lecturer = lecturer;
+        lecture.lectureDate = lectureDate;
+        lecture.capacity = capacity;
+        lecture.remainSeats = remainSeats;
+        lecture.createdAt = LocalDateTime.now();
+
+        return lecture;
+    }
+
+    public boolean isFull() {
+        return remainSeats <= 0;
+    }
+
+    public void decreseRemainSeats() {
+        this.remainSeats = this.remainSeats - 1;
     }
 
     // Getter
@@ -43,16 +74,10 @@ public class Lecture {
         return capacity;
     }
 
+    public Integer getRemainSeats() { return remainSeats; }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public static interface LectureRepository {
-
-        /**
-         * 특강 전체 목록 조회
-         * @return 특강 목록
-         */
-        List<Lecture> findAll();
-    }
 }

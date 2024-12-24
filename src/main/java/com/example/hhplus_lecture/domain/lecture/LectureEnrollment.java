@@ -1,19 +1,38 @@
 package com.example.hhplus_lecture.domain.lecture;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LectureEnrollment {
 
-    private final Long id;
-    private final Long userId;
-    private final Long lectureId;
-    private final LocalDateTime createdAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public LectureEnrollment(Long id, Long userId, Long lectureId, LocalDateTime createdAt) {
-        this.id = id;
-        this.userId = userId;
-        this.lectureId = lectureId;
-        this.createdAt = createdAt;
+    private Long userId;
+
+    private Long lectureId;
+
+    private LocalDateTime createdAt;
+
+    public static LectureEnrollment of(Long userId, Long lectureId) {
+        LectureEnrollment lectureEnrollment = new LectureEnrollment();
+
+        lectureEnrollment.userId = userId;
+        lectureEnrollment.lectureId = lectureId;
+        lectureEnrollment.createdAt = LocalDateTime.now();
+
+        return lectureEnrollment;
     }
 
     // Getter
@@ -31,6 +50,13 @@ public class LectureEnrollment {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    /**
+     * 존재하는 수강신청 내역인지 확인
+     */
+    public boolean isExist(Long userId, Long lectureId) {
+        return this.userId.equals(userId) && this.lectureId.equals(lectureId);
     }
 }
 
