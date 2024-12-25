@@ -1,5 +1,6 @@
 package com.example.hhplus_lecture.infrastructure.lecture;
 
+import com.example.hhplus_lecture.domain.lecture.Lecture;
 import com.example.hhplus_lecture.domain.lecture.LectureEnrollment;
 import com.example.hhplus_lecture.domain.lecture.LectureEnrollmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,22 @@ public class LectureEnrollmentRepositoryImpl implements LectureEnrollmentReposit
     }
 
     @Override
+    public List<Lecture> findEnrolledLecturesByUserId(Long userId) {
+        return lectureEnrollmentJpaRespository.findEnrolledLecturesByUserId(userId);
+    }
+
+    @Override
+    public List<LectureEnrollment> findAll() {
+        return lectureEnrollmentJpaRespository.findAll();
+    }
+
+    @Override
     public List<LectureEnrollment> findBy(long userId, long lectureId) {
         return lectureEnrollmentJpaRespository.findByUserIdAndLectureId(userId, lectureId);
     }
 
     @Override
-    public List<LectureEnrollment> findAllByUserId(Long userId) {
-        return lectureEnrollmentJpaRespository.findAllByUserId(userId);
+    public void deleteAll() {
+        lectureEnrollmentJpaRespository.deleteAll();
     }
 }

@@ -30,4 +30,14 @@ public class LectureRepositoryImpl implements LectureRepository {
     public List<Lecture> findAvailableLectures(LocalDateTime startDate, LocalDateTime endDate, int remainSeats) {
         return lectureJpaRespository.findByLectureDateBetweenAndRemainSeatsGreaterThan(startDate, endDate, remainSeats);
     }
+
+    @Override
+    public List<Lecture> findAll() {
+        return lectureJpaRespository.findAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        lectureJpaRespository.deleteAll();
+    }
 }

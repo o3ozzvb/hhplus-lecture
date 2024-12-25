@@ -7,4 +7,7 @@ public interface LectureRepository {
     Lecture save(Lecture lecture);
     Lecture findById(Long id);
     List<Lecture> findAvailableLectures(LocalDateTime startDate, LocalDateTime endDate, int remainSeats);
+
+    List<Lecture> findAll();
+    void deleteAll();
 }

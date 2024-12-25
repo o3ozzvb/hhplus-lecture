@@ -2,10 +2,12 @@ package com.example.hhplus_lecture.domain.lecture;
 
 import com.example.hhplus_lecture.support.exception.BusinessException;
 import com.example.hhplus_lecture.support.exception.ErrorCode;
+import com.example.hhplus_lecture.util.DatabaseInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import static com.example.hhplus_lecture.fixture.LectureFixture.특강1;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test") // 테스트 환경용 프로필
 class LectureServiceTest {
 
     @Autowired
@@ -25,12 +28,18 @@ class LectureServiceTest {
     @Autowired
     private LectureEnrollmentRepository lectureEnrollmentRepository;
 
+    @Autowired
+    private DatabaseInitializer databaseInitializer;
+
     Lecture lecture;
     long userId = 1L;
     long lectureId;
 
     @BeforeEach
     void beforeEach() {
+        // 데이터베이스 초기화
+        databaseInitializer.resetDatabase();
+
         lecture = lectureRepository.save(특강1());
         lectureId = lecture.getId();
     }
@@ -123,14 +132,14 @@ class LectureServiceTest {
         lectureEnrollmentRepository.save(LectureEnrollment.of(userId, 특강2.getId()));
 
         //when
-        List<LectureEnrollment> lectureEnrollments = lectureService.findLectureEnrollmentsByUserId(userId);
+        List<Lecture> enrolledLectures = lectureService.findEnrolledLecturesByUserId(userId);
 
         //then
-        assertThat(lectureEnrollments).hasSize(2)
-                .extracting("userId", "lectureId")
+        assertThat(enrolledLectures).hasSize(2)
+                .extracting("id", "name")
                 .containsExactly(
-                        tuple(userId, 특강1.getId()),
-                        tuple(userId, 특강2.getId())
+                        tuple(특강1.getId(), 특강1.getName()),
+                        tuple(특강2.getId(), 특강2.getName())
                 );
     }
 }

@@ -21,7 +21,7 @@ public class LectureServiceImpl implements LectureService {
 
     /** 특강 신청하기 */
     @Transactional
-    public void enrollIn(long userId, long lectureId) {
+    public LectureEnrollment enrollIn(long userId, long lectureId) {
         LectureEnrollments lectureEnrollments = new LectureEnrollments(lectureEnrollmentRepository.findBy(userId, lectureId));
 
         Lecture lecture = lectureRepository.findById(lectureId);
@@ -38,7 +38,7 @@ public class LectureServiceImpl implements LectureService {
         lecture.decreseRemainSeats();
         lectureRepository.save(lecture);
 
-        lectureEnrollmentRepository.save(LectureEnrollment.of(userId, lectureId));
+        return lectureEnrollmentRepository.save(LectureEnrollment.of(userId, lectureId));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public List<LectureEnrollment> findLectureEnrollmentsByUserId(long userId) {
-        return lectureEnrollmentRepository.findAllByUserId(userId);
+    public List<Lecture> findEnrolledLecturesByUserId(long userId) {
+        return lectureEnrollmentRepository.findEnrolledLecturesByUserId(userId);
     }
 }
