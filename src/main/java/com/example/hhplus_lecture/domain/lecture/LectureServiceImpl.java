@@ -31,7 +31,7 @@ public class LectureServiceImpl implements LectureService {
         }
         // 동일 사용자가 동일 특강에 신청한 내역이 있는지
         List<LectureEnrollment> lectureEnrollments = lectureEnrollmentRepository.findBy(userId, lectureId);
-        if (lectureEnrollments.size() > 0) {
+        if (!lectureEnrollments.isEmpty()) {
             throw new BusinessException(ErrorCode.DUPLICATE_REGISTRATION);
         }
 
