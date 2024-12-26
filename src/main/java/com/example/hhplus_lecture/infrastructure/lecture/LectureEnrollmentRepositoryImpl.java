@@ -37,4 +37,9 @@ public class LectureEnrollmentRepositoryImpl implements LectureEnrollmentReposit
     public void deleteAll() {
         lectureEnrollmentJpaRespository.deleteAll();
     }
+
+    @Override
+    public int countByLectureId(Long lectureId) {
+        return lectureEnrollmentJpaRespository.countByLectureId(lectureId);
+    }
 }
