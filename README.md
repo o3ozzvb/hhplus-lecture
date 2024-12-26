@@ -61,7 +61,7 @@
 [ ] 각 항목은 특강 ID 및 이름, 강연자 정보를 담고 있어야 합니다.  
 
 ## 3. ERD (Entity Relationship Diagram)
-![erd.png](src/main/java/com/example/hhplus_lecture/support/asset/erd.png)
+![erd.png](src/main/java/com/example/hhplus_lecture/support/asset/erd.png) 
 - Lecture ↔ Registration: 1 : N 관계
     - 하나의 강의(Lecture)에 여러 Registration(신청) 레코드가 생길 수 있음.
 - User ↔ Registration: 1 : N 관계
@@ -104,14 +104,23 @@
 **1. `Many-to-Many` 관계 해소**
 - 하나의 강의를 여러 사용자가 신청할 수 있고, 하나의 사용자가 여러 강의를 신청할 수 있음.
 - `Lecture` 와 `User` 두 테이블만으로 다대다 관계를 직접 표현하기 어렵기 때문에, 
-중간 테이블인 `Registration` 테이블을 두어 `1:N` / `N:1`관계로 분해하는 형태  
+중간 테이블인 `Lecture_Enrollment` 테이블을 두어 `1:N` / `N:1`관계로 분해하는 형태  
 
 **2. 중복 신청 방지 및 선착순 제한**
-- `Registration` 테이블에 `UNIQUE (user_id, lecture_id)` 제약을 걸어 `“한 사용자 + 한 강의”` 조합이 유일하도록 함.
-- `Lecture` 테이블에 `capacity` 컬럼을 두고, `Registration`에서 해당 `lecture_id`로 
-이미 등록된 인원 수`(COUNT(*))`가 `capacity`보다 작은지 체크하여 선착순 로직을 구현
+- `Lecture_Enrollment` 테이블에 `UNIQUE (user_id, lecture_id)` 제약을 걸어 `“한 사용자 + 한 강의”` 조합이 유일하도록 함.
+- `Lecture_Enrollment`에서 `remain_seats` 컬럼을 두어 여석이 있는지 체크함으로써 정원에 해당하는 인원만 강의 신청이 가능하도록 함.
 
-**4. 유연한 확장성**  
+> ### `COUNT(*)` vs. `remain_seats(여석)` 컬럼
+> `COUNT(*)`함수를 통해 `현재 신청 인원 수`을 체크하는 방식은 실시간 조회를 통해 현재 신청 인원 확인이 가능하기에 데이터 무결성을 강하게 보장한다.
+> 하지만, 동시성이 높아질수록 성능이 저하하며 트랜잭션 격리 수준에 따라 대기 또는 데드락이 발생할 수 있다.
+> 
+> 별도의 컬럼으로 `잔여 좌석 수`를 직접 관리할 경우에는 동시성 문제가 적고 대규모 데이터에서 성능이 우수하다.
+> 하지만, 트랜잭션 충돌이 발생할 수 있으며 데이터 불일치의 가능성이 존재한다.
+> 
+> **2주차 과제에서는 동시성이 중요한 대규모 트래픽 환경으로 가정하고 별도의 컬럼으로 `잔여 좌석 수`를 관리하도록 한다.**
+
+
+**3. 유연한 확장성**  
 - 요구사항 확장에 유리하며, 엔티티의 책임이 명확함.  
 - 중간 테이블을 따로 두었기 때문에 추후 확장 관계도 처리가 용이
 
