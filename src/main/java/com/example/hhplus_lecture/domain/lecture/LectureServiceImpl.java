@@ -20,18 +20,17 @@ public class LectureServiceImpl implements LectureService {
     private final LectureEnrollmentRepository lectureEnrollmentRepository;
 
     /** 특강 신청하기 */
-    @Override
     @Transactional
     public LectureEnrollment enrollIn(long userId, long lectureId) {
-        Lecture lecture = lectureRepository.findById(lectureId);
+        LectureEnrollments lectureEnrollments = new LectureEnrollments(lectureEnrollmentRepository.findBy(userId, lectureId));
 
+        Lecture lecture = lectureRepository.findById(lectureId);
         // 특강 여석이 있는지
         if (lecture.isFull()) {
             throw new BusinessException(ErrorCode.LECTURE_FULL);
         }
         // 동일 사용자가 동일 특강에 신청한 내역이 있는지
-        List<LectureEnrollment> lectureEnrollments = lectureEnrollmentRepository.findBy(userId, lectureId);
-        if (!lectureEnrollments.isEmpty()) {
+        if (lectureEnrollments.isEnrollmentExists(userId, lectureId)) {
             throw new BusinessException(ErrorCode.DUPLICATE_REGISTRATION);
         }
 
@@ -43,7 +42,6 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    @Transactional
     public List<Lecture> findAvailableLectures(String startDate, String endDate) {
         String startTime = "000000"; // 00시 00분 00초
         String endTime = "235959"; // 23시 59분 59초

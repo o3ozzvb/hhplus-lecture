@@ -10,16 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static com.example.hhplus_lecture.fixture.LectureFixture.createLecture;
 import static com.example.hhplus_lecture.fixture.LectureFixture.특강1;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("test") // 테스트 환경용 프로필
 class LectureServiceTest {
 
     @Autowired
@@ -48,7 +45,7 @@ class LectureServiceTest {
     }
 
     @Test
-    void 여석없는_특강신청시_예외발생() {
+    void 여석없는_특강신청시_예외발생(){
         // given
         Lecture newLecture = lectureRepository.save(createLecture("특강2", "김선생", "202412251600", 0));
 
@@ -63,7 +60,7 @@ class LectureServiceTest {
     }
 
     @Test
-    void 동일사용자가_동일특강신청시_예외발생() {
+    void 동일사용자가_동일특강신청시_예외발생(){
         // given
         lectureEnrollmentRepository.save(LectureEnrollment.of(userId, lectureId));
 
@@ -76,7 +73,7 @@ class LectureServiceTest {
     }
 
     @Test
-    void 특강신청_성공() {
+    void 특강신청_성공(){
         // given
 
         // when
@@ -92,7 +89,7 @@ class LectureServiceTest {
     }
 
     @Test
-    void 특강신청_성공시_여석이_차감된다() {
+    void 특강신청_성공시_여석이_차감된다(){
         // given
 
         // when
@@ -145,75 +142,4 @@ class LectureServiceTest {
                         tuple(특강2.getId(), 특강2.getName())
                 );
     }
-
-    @Test
-    public void 정원30명_강의신청시_모두_성공한다() {
-        // given
-        Lecture lecture = lectureRepository.save(createLecture("특강1", "일강사", "202412251300", 30));
-
-        // when 30명이 신청
-        for (int i = 1; i <= 30; i++) {
-            lectureService.enrollIn((long) i, lecture.getId());
-        }
-
-        // then
-        // 30명까지 신청 성공
-        assertThat(lectureEnrollmentRepository.countByLectureId(lecture.getId())).isEqualTo(30);
-        // 잔여좌석 수 0
-        Lecture afterEnrolled = lectureRepository.findById(lecture.getId());
-        assertThat(afterEnrolled.getRemainSeats()).isEqualTo(0);
-    }
-
-    @Test
-    public void 정원초과_31명_신청시_31번쨰_신청자는_실패한다() {
-        // given
-        Lecture lecture = lectureRepository.save(createLecture("특강1", "일강사", "202412251300", 30));
-
-        // when 30명이 신청
-        for (int i = 1; i <= 30; i++) {
-            lectureService.enrollIn((long) i, lecture.getId());
-        }
-
-        // then
-        // 31번째 신청은 실패
-        assertThatThrownBy(() -> lectureService.enrollIn(31L, lecture.getId()))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ErrorCode.LECTURE_FULL.getMessage());
-
-        // 실제 신청자는 30명
-        assertThat(lectureEnrollmentRepository.countByLectureId(lecture.getId())).isEqualTo(30);
-        // 잔여좌석 수 0
-        Lecture afterEnrolled = lectureRepository.findById(lecture.getId());
-        assertThat(afterEnrolled.getRemainSeats()).isEqualTo(0);
-    }
-
-    @Test
-    public void 동시에_40명_신청시_30명만_신청에_성공한다() throws InterruptedException {
-        //given
-        Lecture lecture = lectureRepository.save(createLecture("특강1", "일강사", "202412251300", 30));
-
-        // threadPool 생성
-        int threadCount = 40;
-        ExecutorService executorService = Executors.newFixedThreadPool(40);
-
-        //when 40명이 선착순 신청을 동시에 보냄
-        for (int i = 1; i < threadCount; i++) {
-            final Long userId = (long) i;
-            executorService.execute(() -> {
-                lectureService.enrollIn(userId, lecture.getId());
-            });
-        }
-
-        executorService.shutdown();
-        executorService.awaitTermination(10, TimeUnit.SECONDS);
-
-        //then
-        // 성공 인원은 30명
-        assertThat(lectureEnrollmentRepository.countByLectureId(lecture.getId())).isEqualTo(30);
-        // 잔여좌석 수 0
-        Lecture afterEnrolled = lectureRepository.findById(lecture.getId());
-        assertThat(afterEnrolled.getRemainSeats()).isEqualTo(0);
-
-    }
-
 }

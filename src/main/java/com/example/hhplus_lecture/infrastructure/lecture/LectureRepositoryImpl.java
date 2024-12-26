@@ -6,8 +6,6 @@ import com.example.hhplus_lecture.support.exception.BusinessException;
 import com.example.hhplus_lecture.support.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +27,6 @@ public class LectureRepositoryImpl implements LectureRepository {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Lecture> findAvailableLectures(LocalDateTime startDate, LocalDateTime endDate, int remainSeats) {
         return lectureJpaRespository.findByLectureDateBetweenAndRemainSeatsGreaterThan(startDate, endDate, remainSeats);
     }
