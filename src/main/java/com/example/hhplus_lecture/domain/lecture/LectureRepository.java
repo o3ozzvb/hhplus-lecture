@@ -6,6 +6,8 @@ import java.util.List;
 public interface LectureRepository {
     Lecture save(Lecture lecture);
     Lecture findById(Long id);
+    Lecture findLectureWithLock(Long id);
+
     List<Lecture> findAvailableLectures(LocalDateTime startDate, LocalDateTime endDate, int remainSeats);
 
     List<Lecture> findAll();

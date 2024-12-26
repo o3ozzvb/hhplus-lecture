@@ -5,6 +5,8 @@ import com.example.hhplus_lecture.domain.lecture.LectureEnrollment;
 import com.example.hhplus_lecture.domain.lecture.LectureEnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class LectureEnrollmentRepositoryImpl implements LectureEnrollmentReposit
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<LectureEnrollment> findBy(long userId, long lectureId) {
         return lectureEnrollmentJpaRespository.findByUserIdAndLectureId(userId, lectureId);
     }
@@ -36,5 +39,10 @@ public class LectureEnrollmentRepositoryImpl implements LectureEnrollmentReposit
     @Override
     public void deleteAll() {
         lectureEnrollmentJpaRespository.deleteAll();
+    }
+
+    @Override
+    public int countByLectureId(Long lectureId) {
+        return lectureEnrollmentJpaRespository.countByLectureId(lectureId);
     }
 }
