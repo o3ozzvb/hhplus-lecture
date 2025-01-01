@@ -226,4 +226,44 @@ class LectureServiceTest {
         // 실패횟수 10번
         assertThat(failCount.get()).isEqualTo(10);
     }
+
+    @Test
+    public void 동일사용자가_5번신청시_1번만_신청된다() throws InterruptedException {
+        //given
+
+        // threadPool 생성
+        int threadCount = 5;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(1);
+
+        //when 동일한 사용자가 5번을 동시에 신청
+        AtomicInteger failCount = new AtomicInteger();
+        for (int i = 1; i <= threadCount; i++) {
+            executorService.execute(() -> {
+                try {
+                    latch.await();
+                    lectureService.enrollIn(userId, lectureId);
+                } catch (Exception e) {
+                    System.out.println("Exception " + e.getMessage());
+                    failCount.getAndIncrement();
+                }
+            });
+        }
+        latch.countDown();
+        executorService.shutdown();
+
+        //then
+        // 해당 사용자가 해당 강의를 신청한 내역은 1건
+        List<LectureEnrollment> enrollments = lectureEnrollmentRepository.findBy(userId, lectureId);
+        assertThat(enrollments).hasSize(1)
+                .extracting("userId", "lectureId")
+                .containsExactly(
+                        tuple(userId, lectureId)
+                );
+        // 잔여 좌석 수 1 감소
+        Lecture findLecture = lectureRepository.findById(lectureId);
+        assertThat(findLecture.getRemainSeats()).isEqualTo(29);
+        // 실패 횟수 4번
+        assertThat(failCount.get()).isEqualTo(4);
+    }
 }
