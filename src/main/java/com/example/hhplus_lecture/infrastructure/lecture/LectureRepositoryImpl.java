@@ -27,6 +27,11 @@ public class LectureRepositoryImpl implements LectureRepository {
     }
 
     @Override
+    public Lecture findLectureWithLock(Long id) {
+        return lectureJpaRespository.findLectureWithLock(id);
+    }
+
+    @Override
     public List<Lecture> findAvailableLectures(LocalDateTime startDate, LocalDateTime endDate, int remainSeats) {
         return lectureJpaRespository.findByLectureDateBetweenAndRemainSeatsGreaterThan(startDate, endDate, remainSeats);
     }

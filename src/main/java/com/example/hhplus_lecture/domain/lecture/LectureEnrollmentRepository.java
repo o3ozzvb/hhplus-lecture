@@ -12,4 +12,6 @@ public interface LectureEnrollmentRepository {
 
     List<LectureEnrollment> findAll();
     void deleteAll();
+    // 테스트 시 사용
+    int countByLectureId(Long lectureId);
 }

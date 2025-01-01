@@ -17,4 +17,7 @@ public interface LectureEnrollmentJpaRespository extends JpaRepository<LectureEn
     WHERE le.user_id = :userId
     """, nativeQuery = true)
     List<Lecture> findEnrolledLecturesByUserId(long userId);
+
+    // 테스트 시 사용
+    int countByLectureId(Long lectureId);
 }
