@@ -1,7 +1,7 @@
 package com.example.hhplus_lecture.interfaces.api.lecture;
 
 import com.example.hhplus_lecture.domain.lecture.Lecture;
-import com.example.hhplus_lecture.domain.lecture.LectureServiceImpl;
+import com.example.hhplus_lecture.domain.lecture.LectureService;
 import com.example.hhplus_lecture.interfaces.dto.common.ApiResponse;
 import com.example.hhplus_lecture.interfaces.dto.lecture.LectureEnrollRequest;
 import com.example.hhplus_lecture.interfaces.dto.lecture.LectureRequest;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 public class LectureController {
 
-    private final LectureServiceImpl lectureService;
+    private final LectureService lectureService;
 
     /**
      * (핵심)특강 신청 API
