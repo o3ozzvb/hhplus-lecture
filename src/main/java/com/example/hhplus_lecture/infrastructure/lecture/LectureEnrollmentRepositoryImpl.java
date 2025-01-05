@@ -37,6 +37,11 @@ public class LectureEnrollmentRepositoryImpl implements LectureEnrollmentReposit
     }
 
     @Override
+    public List<LectureEnrollment> findByUserIdAndLectureIdWithLock(long userId, long lectureId) {
+        return lectureEnrollmentJpaRespository.findByUserIdAndLectureIdWithLock(userId, lectureId);
+    }
+
+    @Override
     public void deleteAll() {
         lectureEnrollmentJpaRespository.deleteAll();
     }

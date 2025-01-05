@@ -30,7 +30,7 @@ public class LectureServiceImpl implements LectureService {
             throw new BusinessException(ErrorCode.LECTURE_FULL);
         }
         // 동일 사용자가 동일 특강에 신청한 내역이 있는지
-        List<LectureEnrollment> lectureEnrollments = lectureEnrollmentRepository.findBy(userId, lectureId);
+        List<LectureEnrollment> lectureEnrollments = lectureEnrollmentRepository.findByUserIdAndLectureIdWithLock(userId, lectureId);
         if (!lectureEnrollments.isEmpty()) {
             throw new BusinessException(ErrorCode.DUPLICATE_REGISTRATION);
         }
